@@ -1,11 +1,13 @@
 package com.tw.apistackbase.controller;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.tw.apistackbase.core.Company;
 import com.tw.apistackbase.repositories.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/companies")
@@ -36,15 +38,17 @@ public class CompanyController {
     }
 
     @PatchMapping(value = "/{id}", produces = {"application/json"})
-    public Company updateName(@PathVariable Long id, @RequestBody Company company) {
-        Company companyToUpdate = companyRepository.findOneById(id);
+    public ResponseEntity<Company> updateName(@PathVariable Long id, @RequestBody Company company) {
+        Optional<Company> companyToUpdate = Optional.ofNullable(companyRepository.findOneById(id));
 
-        companyToUpdate.setName(company.getName());
-        companyToUpdate.setProfile(company.getProfile());
-        companyToUpdate.setEmployees(company.getEmployees());
+        if(companyToUpdate.isPresent()) {
+            companyToUpdate.get().setName(company.getName());
+            companyToUpdate.get().setProfile(company.getProfile());
+            companyToUpdate.get().setEmployees(company.getEmployees());
 
-        companyRepository.save(companyToUpdate);
-
-        return  companyToUpdate;
+            Company savedCompany = companyRepository.save(companyToUpdate.get());
+            return new ResponseEntity<>(savedCompany, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
