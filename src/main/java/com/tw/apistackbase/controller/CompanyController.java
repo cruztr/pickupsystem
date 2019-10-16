@@ -33,8 +33,13 @@ public class CompanyController {
 
     @DeleteMapping(value = "/{id}", produces = {"application/json"})
     public ResponseEntity<String> delete(@PathVariable Long id){
-        companyRepository.deleteById(id);
-        return ResponseEntity.ok("Deleted ID " + id);
+        Optional<Company> companyToDelete = Optional.ofNullable(companyRepository.findOneById(id));
+
+        if(companyToDelete.isPresent()) {
+            companyRepository.deleteById(id);
+            return new ResponseEntity<>("Deleted ID "+id, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PatchMapping(value = "/{id}", produces = {"application/json"})
