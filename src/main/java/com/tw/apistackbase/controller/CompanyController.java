@@ -3,6 +3,7 @@ package com.tw.apistackbase.controller;
 import com.tw.apistackbase.core.Company;
 import com.tw.apistackbase.repositories.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,4 +27,12 @@ public class CompanyController {
     public Company add(@RequestBody Company company) {
         return companyRepository.save(company);
     }
+
+    @DeleteMapping(value = "/delete/{id}", produces = {"application/json"})
+    public ResponseEntity<String> delete(@PathVariable Long id){
+        companyRepository.deleteById(id);
+        return ResponseEntity.ok("Deleted ID " + id);
+    }
+
+
 }
