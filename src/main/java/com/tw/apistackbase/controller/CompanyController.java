@@ -16,7 +16,7 @@ public class CompanyController {
     @Autowired
     CompanyRepository companyRepository;
 
-    @GetMapping(value = "/all", produces = {"application/json"})
+    @GetMapping(produces = {"application/json"})
     public Iterable<Company> list() {
         return companyRepository.findAll();
     }
@@ -26,7 +26,7 @@ public class CompanyController {
         return companyRepository.findOneById(id);
     }
 
-    @GetMapping(produces = {"application/json"})
+    @GetMapping(produces = {"application/json"}, params = "name")
     public Company getCompany(@RequestParam(required = false) String name) {
         return companyRepository.findByNameContaining(name);
     }
