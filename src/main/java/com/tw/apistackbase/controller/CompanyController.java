@@ -3,6 +3,8 @@ package com.tw.apistackbase.controller;
 import com.tw.apistackbase.core.Company;
 import com.tw.apistackbase.repositories.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +19,8 @@ public class CompanyController {
     CompanyRepository companyRepository;
 
     @GetMapping(produces = {"application/json"})
-    public Iterable<Company> list() {
-        return companyRepository.findAll();
+    public Iterable<Company> list(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize) {
+        return companyRepository.findAll(PageRequest.of(page, pageSize, Sort.by("name").ascending()));
     }
 
     @GetMapping(value = "/{id}", produces = {"application/json"})
