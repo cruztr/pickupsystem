@@ -23,7 +23,8 @@ public class CompanyController {
     }
 
     @GetMapping(produces = {"application/json"})
-    public Iterable<Company> list(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer pageSize) {
+    public Iterable<Company> list(@RequestParam(required = false) Integer page,
+                                  @RequestParam(required = false) Integer pageSize) {
         return companyService.findAll(PageRequest.of(page, pageSize, Sort.by("name").ascending()));
     }
 
@@ -44,27 +45,11 @@ public class CompanyController {
 
     @DeleteMapping(value = "/{id}", produces = {"application/json"})
     public ResponseEntity<String> delete(@PathVariable Long id){
-        Optional<Company> companyToDelete = Optional.ofNullable(companyService.findOneById(id));
-
-        if(companyToDelete.isPresent()) {
-            companyService.deleteById(id);
-            return new ResponseEntity<>("Deleted ID "+id, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return companyService.deleteById(id);
     }
 
     @PatchMapping(value = "/{id}", produces = {"application/json"})
     public ResponseEntity<Company> updateName(@PathVariable Long id, @RequestBody Company company) {
-        Optional<Company> companyToUpdate = Optional.ofNullable(companyService.findOneById(id));
-
-        if(companyToUpdate.isPresent()) {
-            companyToUpdate.get().setName(company.getName());
-            companyToUpdate.get().setProfile(company.getProfile());
-            companyToUpdate.get().setEmployees(company.getEmployees());
-
-            Company savedCompany = companyService.save(companyToUpdate.get());
-            return new ResponseEntity<>(savedCompany, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return companyService.updateNameById(id, company);
     }
 }
