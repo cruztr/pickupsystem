@@ -3,6 +3,7 @@ package com.tw.apistackbase.controller;
 import com.tw.apistackbase.core.Company;
 import com.tw.apistackbase.repositories.CompanyRepository;
 import com.tw.apistackbase.service.CompanyService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -44,7 +45,7 @@ public class CompanyController {
     }
 
     @DeleteMapping(value = "/{id}", produces = {"application/json"})
-    public ResponseEntity<String> delete(@PathVariable Long id){
+    public ResponseEntity<String> delete(@PathVariable Long id) throws NotFoundException {
         return companyService.deleteById(id);
     }
 

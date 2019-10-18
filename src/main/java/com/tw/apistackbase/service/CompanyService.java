@@ -2,6 +2,7 @@ package com.tw.apistackbase.service;
 
 import com.tw.apistackbase.core.Company;
 import com.tw.apistackbase.repositories.CompanyRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import java.util.Optional;
 @Service
 public class CompanyService {
 
+    public static final String COMPANY_NOT_FOUND = "COMPANY NOT FOUND";
     @Autowired
     CompanyRepository companyRepository;
 
@@ -32,14 +34,14 @@ public class CompanyService {
         return companyRepository.save(company);
     }
 
-    public ResponseEntity<String> deleteById(Long id) {
+    public ResponseEntity<String> deleteById(Long id) throws NotFoundException {
         Optional<Company> companyToDelete = Optional.ofNullable(companyRepository.findOneById(id));
 
         if(companyToDelete.isPresent()) {
             companyRepository.deleteById(id);
             return new ResponseEntity<>("Deleted ID "+id, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new NotFoundException(COMPANY_NOT_FOUND);
     }
 
     public ResponseEntity<Company> updateNameById(Long id, Company company) {
